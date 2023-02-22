@@ -7,11 +7,11 @@
     android:id="@+id/main_view"
     tools:context=".MainActivity">
 
-    <TextView
+    <com.example.researchoverlay.SecureTextView
         android:id="@+id/sample_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap to test overlay detection"
+        android:text="Touch me to test overlay detection"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,6 +49,7 @@
         app:layout_constraintVertical_bias="0.0"
         tools:visibility="visible"
         android:filterTouchesWhenObscured="true" />
+
     <!-- filterTouchesWhenObscured to protect button -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

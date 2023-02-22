@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         ViewGroup view = findViewById(R.id.main_view);
 
         // Filter obscured touches (might have undefined behavior on API 31+)
-        //view.setFilterTouchesWhenObscured(true);
+        view.setFilterTouchesWhenObscured(true);
 
         view.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -61,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Touch flags: " + flags,
                             Toast.LENGTH_SHORT).show();
 
-                    // filter malicious event
-                    view.onFilterTouchEventForSecurity(event);
+                    // do not consume
                     return false;
                 }
                 return true;
