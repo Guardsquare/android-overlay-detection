@@ -44,27 +44,46 @@ public class MainActivity extends AppCompatActivity {
         // #     Overlay Detection     #
         // #===========================#
         ViewGroup view = findViewById(R.id.main_view);
+        TextView secureText = findViewById(R.id.sample_text);
+        TextView statusText = findViewById(R.id.textView);
+
+        // protect buttons
+        Button secureFilterButton = findViewById(R.id.secureFilterButton);
+        Button obscureButton = findViewById(R.id.obscureButton);
+        Button partialObscureButton = findViewById(R.id.partialObscureButton);
 
         // Filter obscured touches (might have undefined behavior on API 31+)
-        view.setFilterTouchesWhenObscured(true);
+        secureFilterButton.setFilterTouchesWhenObscured(true);
 
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
+        // detect FLAG_WINDOW_IS_OBSCURED
+        obscureButton.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 int flags = event.getFlags();
-                // FLAG_WINDOW_IS_PARTIALLY_OBSCURED somehow works in API 26+
-                Boolean theBadTouch = (((flags & FLAG_WINDOW_IS_PARTIALLY_OBSCURED) != 0)
-                        || ((flags & FLAG_WINDOW_IS_OBSCURED) != 0));
+                // FLAG_WINDOW_IS_PARTIALLY_OBSCURED somehow works at API 26+
+                Boolean theBadTouch = ((flags & FLAG_WINDOW_IS_OBSCURED) != 0);
 
                 if (theBadTouch)
                 {
-                    Toast.makeText(MainActivity.this, "Touch flags: " + flags,
-                            Toast.LENGTH_SHORT).show();
-
+                    statusText.setText("ObscureButton: Tapjack detected! (flags: " + flags + ")");
                     // do not consume
-                    return false;
+                    return true;
                 }
-                return true;
+                return false;
+            }
+        });
+
+        partialObscureButton.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                int flags = event.getFlags();
+                Boolean theBadTouch = ((flags & FLAG_WINDOW_IS_PARTIALLY_OBSCURED) != 0);
+
+                if (theBadTouch)
+                {
+                    statusText.setText("PartialObscureButton: Tapjack detected! (flags: " + flags + ")");
+                    // do not consume
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -82,19 +101,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-                // hide all non-system overlays
-                Toast.makeText(MainActivity.this,
-                        (!toggleOverlays ? "Hiding" : "Showing" ) + " all non-system overlays",
-                        Toast.LENGTH_SHORT).show();
-
                 // NOTE: Can only be used on API 31 and higher!
-                toggleOverlays = !toggleOverlays;
-                MainActivity.this.getWindow().setHideOverlayWindows(toggleOverlays);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // toggle all non-system overlays
+                    toggleOverlays = !toggleOverlays;
+                    MainActivity.this.getWindow().setHideOverlayWindows(toggleOverlays);
+                    statusText.setText((!toggleOverlays ? "Hiding" : "Showing" ) + " all non-system overlays");
+                } else {
+                    statusText.setText("Hiding only works on API 31 or higher!");
+                }
                 // Do not forget to set HIDE_OVERLAY_WINDOWS permission in AndroidManifest.xml
             }
         });
+    }
 
-        // permissions
+    private void startOverlayService() {
+        // Ckeck permissions and request here if needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Check if the SYSTEM_ALERT_WINDOW permission is granted
             if (!Settings.canDrawOverlays(this)) {
@@ -104,15 +126,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_OVERLAY_PERMISSION);
             } else {
                 // Permission is granted, start the OverlayService
-                startOverlayService();
+                toggleOverlay();
             }
         } else {
             // Permission is granted automatically for API 23+
-            startOverlayService();
+            toggleOverlay();
         }
     }
 
-    private void startOverlayService() {
+    private void toggleOverlay()
+    {
         if (overlayIntent == null)
         {
             overlayIntent = new Intent(this, OverlayService.class);

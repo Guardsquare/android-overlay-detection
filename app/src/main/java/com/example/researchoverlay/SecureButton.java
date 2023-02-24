@@ -6,34 +6,28 @@ import static android.view.MotionEvent.FLAG_WINDOW_IS_PARTIALLY_OBSCURED;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Toast;
+import android.widget.Button;
 
-public class SecureTextView extends androidx.appcompat.widget.AppCompatTextView {
+public class SecureButton extends androidx.appcompat.widget.AppCompatButton {
 
-    public SecureTextView(Context context) {
+    public SecureButton(Context context) {
         super(context);
     }
 
-    public SecureTextView(Context context, AttributeSet attrs) {
+    public SecureButton(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SecureTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SecureButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        return onFilterTouchEventForSecurity(event);
-    }
-
-    @Override
     public boolean onFilterTouchEventForSecurity(MotionEvent event) {
-        // Add custom security check
         int flags = event.getFlags();
         Boolean badTouch = (((flags & FLAG_WINDOW_IS_PARTIALLY_OBSCURED) != 0)
-                         || ((flags & FLAG_WINDOW_IS_OBSCURED) != 0));
+                || ((flags & FLAG_WINDOW_IS_OBSCURED) != 0));
+
         if (badTouch)
         {
             // consume touch event to block touch
