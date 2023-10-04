@@ -29,13 +29,11 @@ The Android application project in this repo demonstrates some ways in which you
 
 For further details, refer to the [companion blog post](https://www.guardsquare.com/blog/protecting-against-android-overlay-attacks-guardsquare).
 
-<br />
 
 ## ✨ Building the application
 
 The application can be built from the command line or within Android Studio:
 
-<br />
 
 ```shell
 $ ./gradlew assembleRelease
