@@ -41,7 +41,7 @@ $ ./gradlew assembleRelease
 
 ## ❓ How to use the application?
 
-The application demos techniques to protect against filter attacks that
+The application demonstrates techniques to protect against filter attacks that
 you can apply to your own application. To get the most out of the example application, the code is best read
 together with the [companion blog post](https://www.guardsquare.com/blog/protecting-against-android-overlay-attacks-guardsquare).
 
